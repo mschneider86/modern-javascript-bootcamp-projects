@@ -6,13 +6,24 @@ const fetchData = async (searchTerm) => {
     },
   });
 
-  console.log(response.data);
+  return response.data.Search;
 };
 
 const input = document.querySelector('input');
 
-const onInput = debounce((event) => {
-  fetchData(event.target.value);
-}, 500);
+const onInput = async (event) => {
+  const movies = await fetchData(event.target.value);
 
-input.addEventListener('input', onInput);
+  for (let movie of movies) {
+    const div = document.createElement('div');
+
+    div.innerHTML = `
+      <img src="${movie.Poster}" alt="${movie.Title}" />
+      <h1>${movie.Title}</h1>
+    `;
+
+    document.querySelector('#target').appendChild(div);
+  }
+};
+
+input.addEventListener('input', debounce(onInput, 500));
